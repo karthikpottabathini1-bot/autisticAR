@@ -1,6 +1,6 @@
 """
-AIris Final App - FastAPI Backend
-Main application entry point
+autisticAR - FastAPI Backend
+Autism Support Assistant - Main application entry point
 """
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException
@@ -18,6 +18,17 @@ from apscheduler.triggers.cron import CronTrigger
 from api.routes import router, set_global_services
 from services.camera_service import CameraService
 from services.model_service import ModelService
+from services.navigation_service import NavigationService
+from services.reading_assistant_service import ReadingAssistantService
+from services.color_recognition_service import ColorRecognitionService
+from services.people_counter_service import PeopleCounterService
+from services.emotion_recognition_service import EmotionRecognitionService
+from services.social_cues_service import SocialCuesService
+from services.sensory_overload_service import SensoryOverloadService
+from services.communication_helper_service import CommunicationHelperService
+from services.routine_assistant_service import RoutineAssistantService
+from services.body_language_service import BodyLanguageService
+from services.ai_conversation_service import AIConversationService
 from services.email_service import get_email_service
 
 # Load .env file - try multiple locations
@@ -53,6 +64,17 @@ else:
 # Global services
 camera_service = CameraService()
 model_service = ModelService()
+navigation_service = None
+reading_assistant_service = None
+color_recognition_service = None
+people_counter_service = None
+emotion_recognition_service = None
+social_cues_service = None
+sensory_overload_service = None
+communication_helper_service = None
+routine_assistant_service = None
+body_language_service = None
+ai_conversation_service = None
 scheduler = AsyncIOScheduler()
 
 
@@ -79,11 +101,44 @@ async def send_weekly_summary_job():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Manage application lifespan - startup and shutdown"""
+    global navigation_service, reading_assistant_service, color_recognition_service, people_counter_service
+    global emotion_recognition_service, social_cues_service, sensory_overload_service
+    global communication_helper_service, routine_assistant_service, body_language_service, ai_conversation_service
+    
     # Startup
-    print("Initializing AIris backend...")
+    print("Initializing autisticAR backend...")
+    print("🧠 autisticAR - Autism Support Assistant")
     await model_service.initialize()
+    
+    # Initialize new services
+    navigation_service = NavigationService(model_service)
+    reading_assistant_service = ReadingAssistantService(model_service)
+    color_recognition_service = ColorRecognitionService(model_service)
+    people_counter_service = PeopleCounterService(model_service)
+    emotion_recognition_service = EmotionRecognitionService(model_service)
+    social_cues_service = SocialCuesService(model_service)
+    sensory_overload_service = SensoryOverloadService(model_service)
+    communication_helper_service = CommunicationHelperService()
+    routine_assistant_service = RoutineAssistantService()
+    body_language_service = BodyLanguageService(model_service)
+    ai_conversation_service = AIConversationService()
+    
     # Set global services in routes module
-    set_global_services(camera_service, model_service)
+    set_global_services(
+        camera_service, 
+        model_service,
+        navigation_service,
+        reading_assistant_service,
+        color_recognition_service,
+        people_counter_service,
+        emotion_recognition_service,
+        social_cues_service,
+        sensory_overload_service,
+        communication_helper_service,
+        routine_assistant_service,
+        body_language_service,
+        ai_conversation_service
+    )
     
     # Initialize email service
     email_service = get_email_service()
@@ -124,15 +179,15 @@ async def lifespan(app: FastAPI):
     yield
     
     # Shutdown
-    print("Shutting down AIris backend...")
+    print("Shutting down autisticAR backend...")
     scheduler.shutdown(wait=False)
     await camera_service.cleanup()
     await model_service.cleanup()
 
 app = FastAPI(
-    title="AIris API",
-    description="Backend API for AIris Unified Assistance Platform",
-    version="1.0.0",
+    title="autisticAR API",
+    description="Backend API for autisticAR - Autism Support Assistant. Helps autistic individuals understand emotions, social cues, and navigate daily life.",
+    version="2.0.0",
     lifespan=lifespan
 )
 
@@ -150,7 +205,11 @@ app.include_router(router)
 
 @app.get("/")
 async def root():
-    return {"message": "AIris API is running", "version": "1.0.0"}
+    return {
+        "message": "autisticAR - Autism Support Assistant",
+        "version": "2.0.0",
+        "purpose": "Helping autistic individuals understand emotions, social cues, and navigate daily life"
+    }
 
 @app.get("/health")
 async def health_check():

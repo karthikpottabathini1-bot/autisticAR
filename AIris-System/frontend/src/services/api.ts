@@ -1,5 +1,5 @@
 /**
- * API Client for AIris Backend
+ * API Client for autisticAR Backend
  */
 
 import axios from 'axios';
@@ -129,6 +129,13 @@ export const apiClient = {
     return response.data;
   },
 
+  async processActivityFrameUpload(frameBase64: string): Promise<ProcessFrameResponse> {
+    const response = await client.post('/api/v1/activity-guide/process-frame-upload', {
+      frame: frameBase64,
+    });
+    return response.data;
+  },
+
   async submitFeedback(request: FeedbackRequest): Promise<any> {
     const response = await client.post('/api/v1/activity-guide/feedback', request);
     return response.data;
@@ -166,9 +173,158 @@ export const apiClient = {
     return response.data;
   },
 
+  async processSceneFrameUpload(frameBase64: string): Promise<SceneDescriptionResponse> {
+    const response = await client.post('/api/v1/scene-description/process-frame-upload', {
+      frame: frameBase64,
+    });
+    return response.data;
+  },
+
   async getRecordingLogs(): Promise<any[]> {
     const response = await client.get('/api/v1/scene-description/logs');
     return response.data.logs || [];
+  },
+
+  // Navigation endpoints
+  async startNavigation(): Promise<{ status: string; message: string }> {
+    const response = await client.post('/api/v1/navigation/start');
+    return response.data;
+  },
+
+  async stopNavigation(): Promise<{ status: string; message: string }> {
+    const response = await client.post('/api/v1/navigation/stop');
+    return response.data;
+  },
+
+  async processNavigationFrameUpload(frameBase64: string): Promise<any> {
+    const response = await client.post('/api/v1/navigation/process-frame-upload', {
+      frame: frameBase64,
+    });
+    return response.data;
+  },
+
+  // Reading Assistant endpoints
+  async startReadingAssistant(): Promise<{ status: string; message: string }> {
+    const response = await client.post('/api/v1/reading-assistant/start');
+    return response.data;
+  },
+
+  async stopReadingAssistant(): Promise<{ status: string; message: string }> {
+    const response = await client.post('/api/v1/reading-assistant/stop');
+    return response.data;
+  },
+
+  async processReadingFrameUpload(frameBase64: string): Promise<any> {
+    const response = await client.post('/api/v1/reading-assistant/process-frame-upload', {
+      frame: frameBase64,
+    });
+    return response.data;
+  },
+
+  // Color Recognition endpoints
+  async startColorRecognition(): Promise<{ status: string; message: string }> {
+    const response = await client.post('/api/v1/color-recognition/start');
+    return response.data;
+  },
+
+  async stopColorRecognition(): Promise<{ status: string; message: string }> {
+    const response = await client.post('/api/v1/color-recognition/stop');
+    return response.data;
+  },
+
+  async processColorFrameUpload(frameBase64: string): Promise<any> {
+    const response = await client.post('/api/v1/color-recognition/process-frame-upload', {
+      frame: frameBase64,
+    });
+    return response.data;
+  },
+
+  // People Counter endpoints
+  async startPeopleCounter(): Promise<{ status: string; message: string }> {
+    const response = await client.post('/api/v1/people-counter/start');
+    return response.data;
+  },
+
+  async stopPeopleCounter(): Promise<{ status: string; message: string }> {
+    const response = await client.post('/api/v1/people-counter/stop');
+    return response.data;
+  },
+
+  async processPeopleFrameUpload(frameBase64: string): Promise<any> {
+    const response = await client.post('/api/v1/people-counter/process-frame-upload', {
+      frame: frameBase64,
+    });
+    return response.data;
+  },
+
+  // Routine Assistant endpoints
+  async getAllRoutines(): Promise<any> {
+    const response = await client.get('/api/v1/routine-assistant/all');
+    return response.data;
+  },
+
+  async startRoutine(routineName: string): Promise<any> {
+    const response = await client.post(`/api/v1/routine-assistant/start/${routineName}`);
+    return response.data;
+  },
+
+  async completeRoutineStep(routineName: string): Promise<any> {
+    const response = await client.post(`/api/v1/routine-assistant/complete-step/${routineName}`);
+    return response.data;
+  },
+
+  // Body Language endpoints
+  async processBodyLanguageFrameUpload(frameBase64: string): Promise<any> {
+    const response = await client.post('/api/v1/body-language/process-frame-upload', {
+      frame: frameBase64,
+    });
+    return response.data;
+  },
+
+  // AI Assistant endpoints
+  async chatWithAI(message: string): Promise<{ response: string; success: boolean }> {
+    const response = await client.post('/api/v1/ai-assistant/chat', { message });
+    return response.data;
+  },
+
+  async chatWithVision(message: string, image: string, context: string = ''): Promise<{ response: string; success: boolean }> {
+    const response = await client.post('/api/v1/ai-assistant/chat-with-vision', { message, image, context });
+    return response.data;
+  },
+
+  // Emotion Recognition endpoints
+  async processEmotionFrameUpload(frameBase64: string): Promise<any> {
+    const response = await client.post('/api/v1/emotion-recognition/process-frame-upload', {
+      frame: frameBase64,
+    });
+    return response.data;
+  },
+
+  // Social Cues endpoints
+  async analyzeSocialCues(frameBase64: string): Promise<any> {
+    const response = await client.post('/api/v1/social-cues/analyze', {
+      frame: frameBase64,
+    });
+    return response.data;
+  },
+
+  // Sensory Overload endpoints
+  async analyzeSensoryEnvironment(frameBase64: string): Promise<any> {
+    const response = await client.post('/api/v1/sensory-overload/analyze', {
+      frame: frameBase64,
+    });
+    return response.data;
+  },
+
+  // Communication Helper endpoints
+  async getAllCommunicationScripts(): Promise<any> {
+    const response = await client.get('/api/v1/communication-helper/scripts');
+    return response.data;
+  },
+
+  async getCommunicationScript(situation: string): Promise<any> {
+    const response = await client.get(`/api/v1/communication-helper/scripts/${situation}`);
+    return response.data;
   },
 
   // TTS endpoints

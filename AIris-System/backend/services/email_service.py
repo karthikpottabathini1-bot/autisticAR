@@ -1,5 +1,5 @@
 """
-Email Service - Handles email notifications for AIris
+Email Service - Handles email notifications for autisticAR
 Uses Gmail SMTP for sending alerts and daily/weekly summaries
 """
 
@@ -15,7 +15,7 @@ from collections import defaultdict
 import json
 
 
-# AIris Brand Colors
+# autisticAR Brand Colors
 COLORS = {
     "gold": "#C9AC78",
     "gold_light": "#D4BC8E",
@@ -263,7 +263,7 @@ class EmailService:
         try:
             message = MIMEMultipart("alternative")
             message["Subject"] = subject
-            message["From"] = f"AIris <{self.config.sender_email}>"
+            message["From"] = f"autisticAR <{self.config.sender_email}>"
             message["To"] = self.config.recipient_email
             
             if plain_content:
@@ -334,9 +334,9 @@ class EmailService:
             severity = "MODERATE"
             severity_color = COLORS['gold']
         
-        subject = f"AIris {severity} Alert — {location.title()}"
+        subject = f"autisticAR {severity} Alert — {location.title()}"
         if is_fall:
-            subject = f"AIris FALL Alert — {location.title()}"
+            subject = f"autisticAR FALL Alert — {location.title()}"
         
         # Risk factors HTML
         risk_factors_html = ""
@@ -449,7 +449,7 @@ class EmailService:
 """
         
         plain_content = f"""
-AIRIS — {severity} Alert {"(FALL DETECTED)" if is_fall else ""}
+autisticAR — {severity} Alert {"(FALL DETECTED)" if is_fall else ""}
 
 Risk Score: {risk_pct}%
 
@@ -492,7 +492,7 @@ Please check on your loved one when possible.
         self.daily_events.append(event)
         self.weekly_events.append(event)
         
-        subject = "AIris FALL Alert"
+        subject = "autisticAR FALL Alert"
         
         html_content = f"""
 <!DOCTYPE html>
@@ -534,7 +534,7 @@ Please check on your loved one when possible.
 """
         
         plain_content = f"""
-AIRIS — FALL ALERT
+autisticAR — FALL ALERT
 
 ⚠️ URGENT: Possible Fall or Collision Detected
 
@@ -619,7 +619,7 @@ Please check on your loved one as soon as possible.
         # Track the event
         self.add_fall_event(timestamp)
         
-        subject = "AIris FALL Alert"
+        subject = "autisticAR FALL Alert"
         
         html_content = f"""
 <!DOCTYPE html>
@@ -679,7 +679,7 @@ Please check on your loved one as soon as possible.
 """
         
         plain_content = f"""
-AIRIS — FALL ALERT
+autisticAR — FALL ALERT
 
 Possible Fall or Collision Detected
 
@@ -716,9 +716,9 @@ Please check on your loved one immediately.
         
         is_all_clear = alert_count == 0
         
-        subject = f"AIris Daily Summary — {yesterday.strftime('%B %d')}"
+        subject = f"autisticAR Daily Summary — {yesterday.strftime('%B %d')}"
         if not is_all_clear:
-            subject = f"AIris Daily Summary — {alert_count} Alert{'s' if alert_count != 1 else ''}"
+            subject = f"autisticAR Daily Summary — {alert_count} Alert{'s' if alert_count != 1 else ''}"
         
         # Build status section
         if is_all_clear:
@@ -858,7 +858,7 @@ Please check on your loved one immediately.
         </div>
         
         <div class="footer">
-            <p>AIris Vision Assistant</p>
+            <p>autisticAR Vision Assistant</p>
         </div>
     </div>
 </body>
@@ -866,7 +866,7 @@ Please check on your loved one immediately.
 """
         
         plain_content = f"""
-AIRIS — Daily Summary
+autisticAR — Daily Summary
 {yesterday.strftime('%B %d, %Y')}
 
 Status: {'All Clear' if is_all_clear else f'{alert_count} Alert(s)'}
@@ -882,7 +882,7 @@ Most Active Period: {patterns.get('most_active_period', '—')}
 Peak Hour: {self._format_hour(patterns.get('most_active_hour'))}
 
 —
-AIris Vision Assistant
+autisticAR Vision Assistant
 """
         
         success = await self._send_email(subject, html_content, plain_content)
@@ -918,7 +918,7 @@ AIris Vision Assistant
         
         is_all_clear = alert_count == 0
         
-        subject = f"AIris Weekly Report — {week_start.strftime('%b %d')} to {today.strftime('%b %d')}"
+        subject = f"autisticAR Weekly Report — {week_start.strftime('%b %d')} to {today.strftime('%b %d')}"
         
         # Status section
         if is_all_clear:
@@ -1038,7 +1038,7 @@ AIris Vision Assistant
         </div>
         
         <div class="footer">
-            <p>AIris Vision Assistant</p>
+            <p>autisticAR Vision Assistant</p>
         </div>
     </div>
 </body>
@@ -1046,7 +1046,7 @@ AIris Vision Assistant
 """
         
         plain_content = f"""
-AIRIS — Weekly Report
+autisticAR — Weekly Report
 {week_start.strftime('%B %d')} — {today.strftime('%B %d, %Y')}
 
 Status: {'All Clear' if is_all_clear else f'{alert_count} Alert(s)'}
@@ -1059,7 +1059,7 @@ Top Locations:
 {chr(10).join(f'• {loc.title()}: {count}' for loc, count in top_locations) if top_locations else '• No data'}
 
 —
-AIris Vision Assistant
+autisticAR Vision Assistant
 """
         
         success = await self._send_email(subject, html_content, plain_content)
@@ -1086,7 +1086,7 @@ AIris Vision Assistant
     
     async def send_welcome_email(self, guardian_name: str = "Guardian") -> bool:
         """Send a welcome email when a guardian is first set up"""
-        subject = "Welcome to AIris"
+        subject = "Welcome to autisticAR"
         
         html_content = f"""
 <!DOCTYPE html>
@@ -1107,14 +1107,14 @@ AIris Vision Assistant
             <div style="text-align: center; padding: 32px 0 24px;">
                 <div style="font-family: Georgia, serif; font-size: 24px; color: {COLORS['text_primary']}; margin-bottom: 12px;">Welcome, {guardian_name}</div>
                 <div style="font-size: 14px; color: {COLORS['text_secondary']}; line-height: 1.6; max-width: 400px; margin: 0 auto;">
-                    You've been registered as a guardian on AIris. You'll now receive notifications about your loved one's safety and daily activities.
+                    You've been registered as a guardian on autisticAR. You'll now receive notifications about your loved one's safety and daily activities.
                 </div>
             </div>
             
             <div style="background: {COLORS['gold']}10; border: 1px solid {COLORS['gold']}25; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
                 <div style="font-family: Georgia, serif; font-size: 14px; color: {COLORS['gold']}; margin-bottom: 12px;">What to Expect</div>
                 <div style="font-size: 13px; color: {COLORS['text_secondary']}; line-height: 1.7;">
-                    AIris monitors the environment and will keep you informed through regular updates and immediate alerts when needed.
+                    autisticAR monitors the environment and will keep you informed through regular updates and immediate alerts when needed.
                 </div>
             </div>
             
@@ -1153,13 +1153,13 @@ AIris Vision Assistant
             
             <div style="text-align: center; padding-top: 8px;">
                 <div style="font-size: 12px; color: {COLORS['text_muted']};">
-                    Thank you for trusting AIris to help keep your loved one safe.
+                    Thank you for trusting autisticAR to help keep your loved one safe.
                 </div>
             </div>
         </div>
         
         <div class="footer">
-            <p>AIris Vision Assistant</p>
+            <p>autisticAR Vision Assistant</p>
         </div>
     </div>
 </body>
@@ -1167,9 +1167,9 @@ AIris Vision Assistant
 """
         
         plain_content = f"""
-Welcome to AIris, {guardian_name}
+Welcome to autisticAR, {guardian_name}
 
-You've been registered as a guardian on AIris. You'll now receive notifications about your loved one's safety and daily activities.
+You've been registered as a guardian on autisticAR. You'll now receive notifications about your loved one's safety and daily activities.
 
 What You'll Receive:
 
@@ -1177,10 +1177,10 @@ What You'll Receive:
 • Daily Summaries — Every morning at 3:00 AM
 • Weekly Reports — Every Friday at midnight
 
-Thank you for trusting AIris to help keep your loved one safe.
+Thank you for trusting autisticAR to help keep your loved one safe.
 
 —
-AIris Vision Assistant
+autisticAR Vision Assistant
 """
         
         return await self._send_email(subject, html_content, plain_content)
@@ -1207,7 +1207,7 @@ AIris Vision Assistant
     
     async def send_welcome_email(self, guardian_name: str = "Guardian") -> bool:
         """Send a welcome email to a newly configured guardian"""
-        subject = "Welcome to AIris"
+        subject = "Welcome to autisticAR"
         
         html_content = f"""
 <!DOCTYPE html>
@@ -1228,15 +1228,15 @@ AIris Vision Assistant
             <div style="text-align: center; padding: 32px 0 24px;">
                 <div style="font-family: Georgia, serif; font-size: 24px; color: {COLORS['text_primary']}; margin-bottom: 12px;">Welcome, {guardian_name}</div>
                 <div style="font-size: 14px; color: {COLORS['text_secondary']}; line-height: 1.6;">
-                    You've been added as a guardian for an AIris user.<br>
+                    You've been added as a guardian for an autisticAR user.<br>
                     You'll now receive important notifications about their safety.
                 </div>
             </div>
             
             <div style="background: {COLORS['gold']}10; border: 1px solid {COLORS['gold']}25; border-radius: 8px; padding: 20px; margin-bottom: 24px;">
-                <div style="font-family: Georgia, serif; font-size: 13px; color: {COLORS['gold']}; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px;">What is AIris?</div>
+                <div style="font-family: Georgia, serif; font-size: 13px; color: {COLORS['gold']}; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px;">What is autisticAR?</div>
                 <div style="font-size: 13px; color: {COLORS['text_secondary']}; line-height: 1.7;">
-                    AIris is an AI-powered vision assistant designed to help visually impaired individuals 
+                    autisticAR is an AI-powered vision assistant designed to help visually impaired individuals 
                     navigate their daily lives safely. The system monitors their environment and can alert 
                     you if it detects any safety concerns.
                 </div>
@@ -1283,7 +1283,7 @@ AIris Vision Assistant
         </div>
         
         <div class="footer">
-            <p>AIris Vision Assistant</p>
+            <p>autisticAR Vision Assistant</p>
         </div>
     </div>
 </body>
@@ -1291,13 +1291,13 @@ AIris Vision Assistant
 """
         
         plain_content = f"""
-AIRIS — Welcome, {guardian_name}
+autisticAR — Welcome, {guardian_name}
 
-You've been added as a guardian for an AIris user.
+You've been added as a guardian for an autisticAR user.
 You'll now receive important notifications about their safety.
 
-WHAT IS AIRIS?
-AIris is an AI-powered vision assistant designed to help visually impaired 
+WHAT IS autisticAR?
+autisticAR is an AI-powered vision assistant designed to help visually impaired 
 individuals navigate their daily lives safely. The system monitors their 
 environment and can alert you if it detects any safety concerns.
 
@@ -1309,14 +1309,14 @@ WHAT YOU'LL RECEIVE:
 Thank you for being there for your loved one.
 
 —
-AIris Vision Assistant
+autisticAR Vision Assistant
 """
         
         return await self._send_email(subject, html_content, plain_content)
     
     async def send_test_email(self) -> bool:
         """Send a test email to verify configuration"""
-        subject = "AIris — Configuration Successful"
+        subject = "autisticAR — Configuration Successful"
         
         html_content = f"""
 <!DOCTYPE html>
@@ -1359,7 +1359,7 @@ AIris Vision Assistant
         </div>
         
         <div class="footer">
-            <p>AIris Vision Assistant</p>
+            <p>autisticAR Vision Assistant</p>
         </div>
     </div>
 </body>
@@ -1367,7 +1367,7 @@ AIris Vision Assistant
 """
         
         plain_content = """
-AIRIS — Configuration Successful
+autisticAR — Configuration Successful
 
 Your email notifications are now active.
 
@@ -1377,7 +1377,7 @@ What You'll Receive:
 • Weekly Reports — Every Friday at midnight
 
 —
-AIris Vision Assistant
+autisticAR Vision Assistant
 """
         
         return await self._send_email(subject, html_content, plain_content)

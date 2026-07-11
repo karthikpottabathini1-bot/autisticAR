@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Loader2, User, Bot } from "lucide-react";
 
 interface TranscriptionBubbleProps {
@@ -159,7 +159,7 @@ export default function TranscriptionBubble({
   const renderBubble = (
     state: BubbleState,
     type: 'user' | 'system',
-    side: 'left' | 'right'
+    _side: 'left' | 'right'
   ) => {
     const config =
       type === 'user'
@@ -176,7 +176,7 @@ export default function TranscriptionBubble({
         : {
             container: "bg-dark-surface border-brand-gold text-dark-text-primary",
             icon: Bot,
-            label: "AIris",
+            label: "autisticAR",
             iconClass: "text-brand-gold",
             labelClass: "text-brand-gold/70",
             animation: "animate-fluidInLeft",

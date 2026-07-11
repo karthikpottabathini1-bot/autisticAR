@@ -17,10 +17,13 @@ import {
 } from "lucide-react";
 import { apiClient } from "../services/api";
 import { getVoiceControlService } from "../services/voiceControl";
+import { getBrowserCameraService } from "../services/browserCamera";
 
 interface SceneDescriptionProps {
   cameraOn: boolean;
   voiceOnlyMode?: boolean;
+  cameraSource?: "browser" | "backend" | "esp32";
+  onStatsUpdate?: (key: 'objectsFound' | 'textRead' | 'peopleDetected' | 'incidents', increment?: number) => void;
 }
 
 interface SessionStats {
@@ -43,6 +46,8 @@ interface SummaryEvent {
 export default function SceneDescription({
   cameraOn,
   voiceOnlyMode = false,
+  cameraSource = "backend",
+  onStatsUpdate: _onStatsUpdate,
 }: SceneDescriptionProps) {
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -268,13 +273,15 @@ export default function SceneDescription({
 
   useEffect(() => {
     if (cameraOn) {
-      startFastFrameUpdates();
+      startFastFrameUpdates().catch(err => {
+        console.error("[SceneDescription] Failed to start frame updates:", err);
+      });
     } else {
       stopAllIntervals();
       setFrameUrl(null);
     }
     return () => stopAllIntervals();
-  }, [cameraOn]);
+  }, [cameraOn, cameraSource]);
 
   useEffect(() => {
     if (isRecording) {
@@ -307,12 +314,104 @@ export default function SceneDescription({
     }
   };
 
-  const startFastFrameUpdates = () => {
+  const startFastFrameUpdates = async () => {
     if (frameIntervalRef.current) clearInterval(frameIntervalRef.current);
 
     let lastFrameTime = 0;
     const FRAME_INTERVAL_MS = 200; // 5 FPS - enough for smooth display, reduces server load
 
+    // For browser camera, start it with the frame callback
+    if (cameraSource === "browser") {
+      const browserCamera = getBrowserCameraService();
+      
+      const processBrowserFrame = async (frameBase64: string) => {
+        const now = Date.now();
+        if (now - lastFrameTime < FRAME_INTERVAL_MS) {
+          return;
+        }
+        lastFrameTime = now;
+
+        try {
+          const result = await apiClient.processSceneFrameUpload(frameBase64);
+          
+          if (result.frame) {
+            setFrameUrl(`data:image/jpeg;base64,${result.frame}`);
+          }
+          
+          if (result.description) {
+            setCurrentDescription(result.description);
+            frameCountRef.current += 1;
+            const frameIndex = (frameCountRef.current - 1) % BUFFER_MAX;
+            setFilledFrames((prev) => {
+              const newFrames = [...prev];
+              if (!newFrames.includes(frameIndex)) {
+                newFrames.push(frameIndex);
+              }
+              return newFrames;
+            });
+          }
+
+          if (result.stats) {
+            setStats(result.stats);
+          }
+
+          const alertWasSent =
+            result.alert_sent || result.fall_alert_sent || false;
+          if (alertWasSent) {
+            const alertType = result.fall_alert_sent
+              ? "Fall Alert"
+              : "Safety Alert";
+            const notificationTimestamp = Date.now();
+            setAlertNotification({
+              show: true,
+              message: `${alertType} sent to guardian`,
+              timestamp: notificationTimestamp,
+            });
+
+            setTimeout(() => {
+              setAlertNotification((prev) => {
+                if (prev && prev.timestamp === notificationTimestamp) {
+                  return null;
+                }
+                return prev;
+              });
+            }, 5000);
+          }
+
+          if (result.summary && result.summary !== lastSummaryRef.current) {
+            setCurrentSummary(result.summary);
+            lastSummaryRef.current = result.summary;
+            if (result.safety_alert) {
+              setSafetyAlert(true);
+              setRiskScore(result.risk_score || 0);
+            }
+          }
+        } catch (error: any) {
+          if (error?.code !== 'ERR_INSUFFICIENT_RESOURCES' && 
+              error?.message?.includes('ERR_INSUFFICIENT_RESOURCES') === false) {
+            console.error("Error processing browser frame:", error);
+          }
+        }
+      };
+
+      // Start the browser camera with the frame callback
+      const deviceId = undefined; // Use default camera
+      const success = await browserCamera.start(deviceId, processBrowserFrame);
+      
+      if (!success) {
+        console.error("[SceneDescription] Failed to start browser camera");
+        return;
+      }
+      
+      // Set up a polling interval for UI updates
+      frameIntervalRef.current = window.setInterval(() => {
+        // Keep the interval alive for UI updates
+      }, FRAME_INTERVAL_MS);
+      
+      return;
+    }
+
+    // For backend/ESP32 camera, use the original polling approach
     const updateFrame = async () => {
       const now = Date.now();
       // Throttle frame requests to prevent resource exhaustion
@@ -353,6 +452,11 @@ export default function SceneDescription({
 
   const startAnalysisInterval = () => {
     if (analysisIntervalRef.current) clearInterval(analysisIntervalRef.current);
+
+    // For browser camera, frame processing is already handled in startFastFrameUpdates
+    if (cameraSource === "browser") {
+      return;
+    }
 
     const processFrame = async () => {
       try {
@@ -489,6 +593,14 @@ export default function SceneDescription({
     analysisIntervalRef.current = null;
     countdownIntervalRef.current = null;
     timerIntervalRef.current = null;
+    
+    // Stop browser camera if in browser mode
+    if (cameraSource === "browser") {
+      const browserCamera = getBrowserCameraService();
+      browserCamera.stop().catch(err => {
+        console.error("[SceneDescription] Failed to stop browser camera:", err);
+      });
+    }
   };
 
   const stopAnalysisInterval = () => {

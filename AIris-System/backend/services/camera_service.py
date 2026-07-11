@@ -80,17 +80,21 @@ class CameraService:
             # Try multiple camera indices (Webcam mode)
             for camera_index in [0, 1, 2]:
                 print(f"Trying webcam index {camera_index}...")
-                self.vid_cap = cv2.VideoCapture(camera_index)
-                await asyncio.sleep(0.5)  # Give camera time to initialize
+                # Use AVFoundation backend on macOS for better compatibility
+                self.vid_cap = cv2.VideoCapture(camera_index, cv2.CAP_AVFOUNDATION)
+                await asyncio.sleep(2.0)  # Longer initialization for macOS
                 
                 if self.vid_cap.isOpened():
-                    ret, test_frame = self.vid_cap.read()
-                    if ret and test_frame is not None:
-                        self.is_running_flag = True
-                        print(f"Successfully connected to webcam {camera_index}")
-                        return True
-                    else:
-                        self.vid_cap.release()
+                    # Warm-up: try reading multiple frames with longer waits
+                    for attempt in range(20):
+                        ret, test_frame = self.vid_cap.read()
+                        if ret and test_frame is not None:
+                            self.is_running_flag = True
+                            print(f"Successfully connected to webcam {camera_index}")
+                            return True
+                        await asyncio.sleep(0.5)  # Wait longer between attempts
+                    print(f"Camera {camera_index} opened but couldn't read frames after 20 attempts")
+                    self.vid_cap.release()
             
             return False
     

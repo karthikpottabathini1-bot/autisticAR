@@ -6,7 +6,7 @@
 type TimeOfDay = "morning" | "afternoon" | "evening" | "night";
 
 interface WelcomeMessageConfig {
-  mode: "Activity Guide" | "Scene Description";
+  mode: "Activity Guide" | "Scene Description" | "Navigation" | "Reading" | "Color" | "People Counter" | "Emotion Recognition" | "Social Cues" | "Sensory Overload" | "Communication Helper" | "Routine Assistant" | "Body Language" | "AI Assistant";
   cameraOn: boolean;
 }
 
@@ -77,8 +77,26 @@ export function generateWelcomeMessage(config: WelcomeMessageConfig): string {
   // Add mode context (very brief)
   if (config.mode === "Activity Guide") {
     parts.push("Activity Guide mode.");
-  } else {
+  } else if (config.mode === "Scene Description") {
     parts.push("Scene Description mode.");
+  } else if (config.mode === "Navigation") {
+    parts.push("Navigation mode.");
+  } else if (config.mode === "Reading") {
+    parts.push("Reading Assistant mode.");
+  } else if (config.mode === "Color") {
+    parts.push("Color Recognition mode.");
+  } else if (config.mode === "People Counter") {
+    parts.push("People Counter mode.");
+  } else if (config.mode === "Emotion Recognition") {
+    parts.push("Emotion Recognition mode.");
+  } else if (config.mode === "Social Cues") {
+    parts.push("Social Cues mode.");
+  } else if (config.mode === "Sensory Overload") {
+    parts.push("Sensory Overload mode.");
+  } else if (config.mode === "Communication Helper") {
+    parts.push("Communication Helper mode.");
+  } else if (config.mode === "Routine Assistant") {
+    parts.push("Routine Assistant mode.");
   }
   
   // Add camera status (only if off, to prompt action)

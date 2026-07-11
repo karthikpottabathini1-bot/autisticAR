@@ -21,8 +21,8 @@ import { apiClient } from "../services/api";
 interface HardwareSettingsProps {
   isOpen: boolean;
   onClose: () => void;
-  cameraSource: "local" | "esp32";
-  onCameraSourceChange: (source: "local" | "esp32") => void;
+  cameraSource: "browser" | "backend" | "esp32";
+  onCameraSourceChange: (source: "browser" | "backend" | "esp32") => void;
 }
 
 type SettingsTab = "camera" | "email";
@@ -138,9 +138,9 @@ export default function HardwareSettings({
     return "text-green-400";
   };
 
-  // Auto-configure webcam when switching to local mode
+  // Auto-configure webcam when switching to backend mode
   useEffect(() => {
-    if (cameraSource === "local") {
+    if (cameraSource === "backend") {
       apiClient.setCameraConfig("webcam").catch(console.error);
     }
   }, [cameraSource]);
@@ -203,7 +203,7 @@ export default function HardwareSettings({
     }
   };
 
-  const handleSourceChange = (source: "local" | "esp32") => {
+  const handleSourceChange = (source: "browser" | "backend" | "esp32") => {
     onCameraSourceChange(source);
     setProvisionStatus({ type: null, message: "" });
   };
@@ -297,18 +297,30 @@ export default function HardwareSettings({
                 <label className="text-sm font-medium text-dark-text-secondary uppercase tracking-wider">
                   Camera Source
                 </label>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   <button
-                    onClick={() => handleSourceChange("local")}
+                    onClick={() => handleSourceChange("browser")}
                     className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2 ${
-                      cameraSource === "local"
+                      cameraSource === "browser"
+                        ? "border-brand-gold bg-brand-gold/10 text-brand-gold"
+                        : "border-dark-border bg-dark-bg text-dark-text-secondary hover:border-dark-text-secondary hover:bg-dark-surface"
+                    }`}
+                  >
+                    <Camera className="w-6 h-6" />
+                    <span className="font-medium">Browser Camera</span>
+                    <span className="text-xs opacity-70">Direct Access</span>
+                  </button>
+                  <button
+                    onClick={() => handleSourceChange("backend")}
+                    className={`p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2 ${
+                      cameraSource === "backend"
                         ? "border-brand-gold bg-brand-gold/10 text-brand-gold"
                         : "border-dark-border bg-dark-bg text-dark-text-secondary hover:border-dark-text-secondary hover:bg-dark-surface"
                     }`}
                   >
                     <Laptop className="w-6 h-6" />
-                    <span className="font-medium">Local Camera</span>
-                    <span className="text-xs opacity-70">Laptop Webcam</span>
+                    <span className="font-medium">Backend Camera</span>
+                    <span className="text-xs opacity-70">Server Webcam</span>
                   </button>
                   <button
                     onClick={() => handleSourceChange("esp32")}
@@ -325,19 +337,41 @@ export default function HardwareSettings({
                 </div>
               </div>
 
-              {/* Local Mode - Simple confirmation */}
-              {cameraSource === "local" && (
+              {/* Browser Mode - Simple confirmation */}
+              {cameraSource === "browser" && (
+                <div className="p-5 bg-dark-bg rounded-xl border border-dark-border text-center space-y-3">
+                  <div className="w-14 h-14 mx-auto rounded-full bg-brand-gold/10 flex items-center justify-center">
+                    <Camera className="w-7 h-7 text-brand-gold" />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-semibold text-dark-text-primary font-heading">
+                      Using Browser Camera
+                    </h3>
+                    <p className="text-dark-text-secondary mt-1.5 text-sm">
+                      The system will use your browser's camera directly. You can
+                      select which camera to use from the dropdown in the header.
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-center gap-2 text-green-400 text-sm">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Ready to use</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Backend Mode - Simple confirmation */}
+              {cameraSource === "backend" && (
                 <div className="p-5 bg-dark-bg rounded-xl border border-dark-border text-center space-y-3">
                   <div className="w-14 h-14 mx-auto rounded-full bg-brand-gold/10 flex items-center justify-center">
                     <Laptop className="w-7 h-7 text-brand-gold" />
                   </div>
                   <div>
                     <h3 className="text-base font-semibold text-dark-text-primary font-heading">
-                      Using Laptop Camera
+                      Using Backend Camera
                     </h3>
                     <p className="text-dark-text-secondary mt-1.5 text-sm">
-                      The system will use your laptop's built-in webcam. No
-                      additional configuration required.
+                      The system will use the server's webcam via OpenCV. This
+                      requires camera permissions for the terminal/backend.
                     </p>
                   </div>
                   <div className="flex items-center justify-center gap-2 text-green-400 text-sm">

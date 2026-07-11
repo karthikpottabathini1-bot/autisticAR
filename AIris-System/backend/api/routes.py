@@ -1,5 +1,5 @@
 """
-API Routes for AIris Backend
+API Routes for autisticAR Backend
 """
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException, UploadFile, File
@@ -19,6 +19,17 @@ from services.camera_service import CameraService
 from services.model_service import ModelService
 from services.activity_guide_service import ActivityGuideService
 from services.scene_description_service import SceneDescriptionService
+from services.navigation_service import NavigationService
+from services.reading_assistant_service import ReadingAssistantService
+from services.color_recognition_service import ColorRecognitionService
+from services.people_counter_service import PeopleCounterService
+from services.emotion_recognition_service import EmotionRecognitionService
+from services.social_cues_service import SocialCuesService
+from services.sensory_overload_service import SensoryOverloadService
+from services.communication_helper_service import CommunicationHelperService
+from services.routine_assistant_service import RoutineAssistantService
+from services.body_language_service import BodyLanguageService
+from services.ai_conversation_service import AIConversationService
 from services.tts_service import TTSService
 from services.stt_service import STTService
 from services.email_service import get_email_service
@@ -35,14 +46,54 @@ _camera_service: CameraService = None
 _model_service: ModelService = None
 _activity_guide_service: ActivityGuideService = None
 _scene_description_service: SceneDescriptionService = None
+_navigation_service: NavigationService = None
+_reading_assistant_service: ReadingAssistantService = None
+_color_recognition_service: ColorRecognitionService = None
+_people_counter_service: PeopleCounterService = None
+_emotion_recognition_service: EmotionRecognitionService = None
+_social_cues_service: SocialCuesService = None
+_sensory_overload_service: SensoryOverloadService = None
+_communication_helper_service: CommunicationHelperService = None
+_routine_assistant_service: RoutineAssistantService = None
+_body_language_service: BodyLanguageService = None
+_ai_conversation_service: AIConversationService = None
 _tts_service: TTSService = None
 _stt_service: STTService = None
 
-def set_global_services(camera: CameraService, model: ModelService):
+def set_global_services(
+    camera: CameraService, 
+    model: ModelService,
+    navigation: NavigationService = None,
+    reading_assistant: ReadingAssistantService = None,
+    color_recognition: ColorRecognitionService = None,
+    people_counter: PeopleCounterService = None,
+    emotion_recognition: EmotionRecognitionService = None,
+    social_cues: SocialCuesService = None,
+    sensory_overload: SensoryOverloadService = None,
+    communication_helper: CommunicationHelperService = None,
+    routine_assistant: RoutineAssistantService = None,
+    body_language: BodyLanguageService = None,
+    ai_conversation: AIConversationService = None
+):
     """Set global services from main.py"""
     global _camera_service, _model_service, _scene_description_service, _activity_guide_service
+    global _navigation_service, _reading_assistant_service, _color_recognition_service, _people_counter_service
+    global _emotion_recognition_service, _social_cues_service, _sensory_overload_service
+    global _communication_helper_service, _routine_assistant_service, _body_language_service, _ai_conversation_service
+    
     _camera_service = camera
     _model_service = model
+    _navigation_service = navigation
+    _reading_assistant_service = reading_assistant
+    _color_recognition_service = color_recognition
+    _people_counter_service = people_counter
+    _emotion_recognition_service = emotion_recognition
+    _social_cues_service = social_cues
+    _sensory_overload_service = sensory_overload
+    _communication_helper_service = communication_helper
+    _routine_assistant_service = routine_assistant
+    _body_language_service = body_language
+    _ai_conversation_service = ai_conversation
     
     # Eagerly initialize services that need Groq so we see any errors at startup
     print("\n📦 Initializing AI services...")
@@ -89,6 +140,72 @@ def get_stt_service() -> STTService:
     if _stt_service is None:
         _stt_service = STTService()
     return _stt_service
+
+def get_navigation_service() -> NavigationService:
+    global _navigation_service
+    if _navigation_service is None:
+        raise RuntimeError("Navigation service not initialized. This should be set during app startup.")
+    return _navigation_service
+
+def get_reading_assistant_service() -> ReadingAssistantService:
+    global _reading_assistant_service
+    if _reading_assistant_service is None:
+        raise RuntimeError("Reading assistant service not initialized. This should be set during app startup.")
+    return _reading_assistant_service
+
+def get_color_recognition_service() -> ColorRecognitionService:
+    global _color_recognition_service
+    if _color_recognition_service is None:
+        raise RuntimeError("Color recognition service not initialized. This should be set during app startup.")
+    return _color_recognition_service
+
+def get_people_counter_service() -> PeopleCounterService:
+    global _people_counter_service
+    if _people_counter_service is None:
+        raise RuntimeError("People counter service not initialized. This should be set during app startup.")
+    return _people_counter_service
+
+def get_emotion_recognition_service() -> EmotionRecognitionService:
+    global _emotion_recognition_service
+    if _emotion_recognition_service is None:
+        raise RuntimeError("Emotion recognition service not initialized. This should be set during app startup.")
+    return _emotion_recognition_service
+
+def get_social_cues_service() -> SocialCuesService:
+    global _social_cues_service
+    if _social_cues_service is None:
+        raise RuntimeError("Social cues service not initialized. This should be set during app startup.")
+    return _social_cues_service
+
+def get_sensory_overload_service() -> SensoryOverloadService:
+    global _sensory_overload_service
+    if _sensory_overload_service is None:
+        raise RuntimeError("Sensory overload service not initialized. This should be set during app startup.")
+    return _sensory_overload_service
+
+def get_communication_helper_service() -> CommunicationHelperService:
+    global _communication_helper_service
+    if _communication_helper_service is None:
+        raise RuntimeError("Communication helper service not initialized. This should be set during app startup.")
+    return _communication_helper_service
+
+def get_routine_assistant_service() -> RoutineAssistantService:
+    global _routine_assistant_service
+    if _routine_assistant_service is None:
+        raise RuntimeError("Routine assistant service not initialized. This should be set during app startup.")
+    return _routine_assistant_service
+
+def get_body_language_service() -> BodyLanguageService:
+    global _body_language_service
+    if _body_language_service is None:
+        raise RuntimeError("Body language service not initialized.")
+    return _body_language_service
+
+def get_ai_conversation_service() -> AIConversationService:
+    global _ai_conversation_service
+    if _ai_conversation_service is None:
+        raise RuntimeError("AI conversation service not initialized.")
+    return _ai_conversation_service
 
 # ==================== Camera Endpoints ====================
 class CameraConfigRequest(BaseModel):
@@ -315,6 +432,109 @@ async def process_activity_frame():
         raise
     except Exception as e:
         print(f"Error in process_activity_frame: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error processing frame: {str(e)}")
+
+class FrameUploadRequest(BaseModel):
+    frame: str  # base64 encoded JPEG frame
+
+@router.post("/activity-guide/process-frame-upload")
+async def process_activity_frame_upload(request: FrameUploadRequest):
+    """Process a frame uploaded from the browser camera"""
+    try:
+        activity_guide_service = get_activity_guide_service()
+        
+        # Decode base64 frame to numpy array
+        frame_bytes = base64.b64decode(request.frame)
+        nparr = np.frombuffer(frame_bytes, np.uint8)
+        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        
+        if frame is None:
+            raise HTTPException(status_code=400, detail="Invalid frame data")
+        
+        result = await activity_guide_service.process_frame(frame)
+        
+        # Encode processed frame
+        processed_frame = result.get("annotated_frame", frame)
+        if processed_frame is None:
+            processed_frame = frame
+        
+        try:
+            _, buffer = cv2.imencode('.jpg', processed_frame, [cv2.IMWRITE_JPEG_QUALITY, 90])
+            frame_bytes = buffer.tobytes()
+            frame_base64 = base64.b64encode(frame_bytes).decode()
+        except Exception as e:
+            print(f"Error encoding frame: {e}")
+            _, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 90])
+            frame_bytes = buffer.tobytes()
+            frame_base64 = base64.b64encode(frame_bytes).decode()
+        
+        return {
+            "frame": frame_base64,
+            "guidance": result.get("guidance"),
+            "stage": result.get("stage"),
+            "instruction": result.get("instruction"),
+            "detected_objects": result.get("detected_objects", []),
+            "hand_detected": result.get("hand_detected", False)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error in process_activity_frame_upload: {e}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error processing frame: {str(e)}")
+
+@router.post("/scene-description/process-frame-upload")
+async def process_scene_frame_upload(request: FrameUploadRequest):
+    """Process a scene description frame uploaded from the browser camera"""
+    try:
+        scene_description_service = get_scene_description_service()
+        
+        # Decode base64 frame to numpy array
+        frame_bytes = base64.b64decode(request.frame)
+        nparr = np.frombuffer(frame_bytes, np.uint8)
+        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        
+        if frame is None:
+            raise HTTPException(status_code=400, detail="Invalid frame data")
+        
+        result = await scene_description_service.process_frame(frame)
+        
+        # Encode processed frame
+        processed_frame = result.get("annotated_frame", frame)
+        if processed_frame is None:
+            processed_frame = frame
+        
+        try:
+            _, buffer = cv2.imencode('.jpg', processed_frame, [cv2.IMWRITE_JPEG_QUALITY, 90])
+            frame_bytes = buffer.tobytes()
+            frame_base64 = base64.b64encode(frame_bytes).decode()
+        except Exception as e:
+            print(f"Error encoding frame: {e}")
+            _, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 90])
+            frame_bytes = buffer.tobytes()
+            frame_base64 = base64.b64encode(frame_bytes).decode()
+        
+        return {
+            "frame": frame_base64,
+            "description": result.get("description"),
+            "summary": result.get("summary"),
+            "safety_alert": result.get("safety_alert", False),
+            "risk_score": result.get("risk_score"),
+            "risk_factors": result.get("risk_factors", []),
+            "confidence": result.get("confidence"),
+            "is_recording": result.get("is_recording", False),
+            "stats": result.get("stats"),
+            "recent_observations": result.get("recent_observations", []),
+            "fall_alert_sent": result.get("fall_alert_sent", False),
+            "alert_sent": result.get("alert_sent", False)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        print(f"Error in process_scene_frame_upload: {e}")
         import traceback
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Error processing frame: {str(e)}")
@@ -880,4 +1100,646 @@ async def set_risk_threshold(update: RiskThresholdUpdate):
         "threshold": email_service.risk_threshold,
         "message": f"Risk threshold set to {threshold:.2f}"
     }
+
+
+# ==================== NAVIGATION ENDPOINTS ====================
+
+@router.post("/navigation/start")
+async def start_navigation():
+    """Start navigation mode"""
+    try:
+        navigation_service = get_navigation_service()
+        result = await navigation_service.start_navigation()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/navigation/stop")
+async def stop_navigation():
+    """Stop navigation mode"""
+    try:
+        navigation_service = get_navigation_service()
+        result = await navigation_service.stop_navigation()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/navigation/process-frame")
+async def process_navigation_frame():
+    """Process a frame for navigation assistance"""
+    try:
+        navigation_service = get_navigation_service()
+        camera_service = get_camera_service()
+        
+        frame = await camera_service.get_frame()
+        if frame is None:
+            raise HTTPException(status_code=400, detail="No frame available")
+        
+        result = await navigation_service.process_frame(frame)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/navigation/process-frame-upload")
+async def process_navigation_frame_upload(frame_data: dict):
+    """Process an uploaded frame for navigation assistance"""
+    try:
+        navigation_service = get_navigation_service()
+        
+        # Decode base64 frame
+        frame_bytes = base64.b64decode(frame_data['frame'])
+        nparr = np.frombuffer(frame_bytes, np.uint8)
+        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        
+        if frame is None:
+            raise HTTPException(status_code=400, detail="Invalid frame data")
+        
+        result = await navigation_service.process_frame(frame)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/navigation/status")
+async def get_navigation_status():
+    """Get navigation service status"""
+    try:
+        navigation_service = get_navigation_service()
+        return navigation_service.get_status()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==================== READING ASSISTANT ENDPOINTS ====================
+
+@router.post("/reading-assistant/start")
+async def start_reading_assistant():
+    """Start reading assistant mode"""
+    try:
+        reading_service = get_reading_assistant_service()
+        result = await reading_service.start_reading()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/reading-assistant/stop")
+async def stop_reading_assistant():
+    """Stop reading assistant mode"""
+    try:
+        reading_service = get_reading_assistant_service()
+        result = await reading_service.stop_reading()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/reading-assistant/process-frame")
+async def process_reading_frame():
+    """Process a frame for text recognition"""
+    try:
+        reading_service = get_reading_assistant_service()
+        camera_service = get_camera_service()
+        
+        frame = await camera_service.get_frame()
+        if frame is None:
+            raise HTTPException(status_code=400, detail="No frame available")
+        
+        result = await reading_service.process_frame(frame)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/reading-assistant/process-frame-upload")
+async def process_reading_frame_upload(frame_data: dict):
+    """Process an uploaded frame for text recognition"""
+    try:
+        reading_service = get_reading_assistant_service()
+        
+        # Decode base64 frame
+        frame_bytes = base64.b64decode(frame_data['frame'])
+        nparr = np.frombuffer(frame_bytes, np.uint8)
+        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        
+        if frame is None:
+            raise HTTPException(status_code=400, detail="Invalid frame data")
+        
+        result = await reading_service.process_frame(frame)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/reading-assistant/status")
+async def get_reading_assistant_status():
+    """Get reading assistant status"""
+    try:
+        reading_service = get_reading_assistant_service()
+        return reading_service.get_status()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/reading-assistant/history")
+async def get_reading_history():
+    """Get text recognition history"""
+    try:
+        reading_service = get_reading_assistant_service()
+        return {"history": reading_service.get_text_history()}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==================== COLOR RECOGNITION ENDPOINTS ====================
+
+@router.post("/color-recognition/start")
+async def start_color_recognition():
+    """Start color recognition mode"""
+    try:
+        color_service = get_color_recognition_service()
+        result = await color_service.start_color_recognition()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/color-recognition/stop")
+async def stop_color_recognition():
+    """Stop color recognition mode"""
+    try:
+        color_service = get_color_recognition_service()
+        result = await color_service.stop_color_recognition()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/color-recognition/process-frame")
+async def process_color_frame():
+    """Process a frame for color recognition"""
+    try:
+        color_service = get_color_recognition_service()
+        camera_service = get_camera_service()
+        
+        frame = await camera_service.get_frame()
+        if frame is None:
+            raise HTTPException(status_code=400, detail="No frame available")
+        
+        result = await color_service.process_frame(frame)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/color-recognition/process-frame-upload")
+async def process_color_frame_upload(frame_data: dict):
+    """Process an uploaded frame for color recognition"""
+    try:
+        color_service = get_color_recognition_service()
+        
+        # Decode base64 frame
+        frame_bytes = base64.b64decode(frame_data['frame'])
+        nparr = np.frombuffer(frame_bytes, np.uint8)
+        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        
+        if frame is None:
+            raise HTTPException(status_code=400, detail="Invalid frame data")
+        
+        result = await color_service.process_frame(frame)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/color-recognition/status")
+async def get_color_recognition_status():
+    """Get color recognition status"""
+    try:
+        color_service = get_color_recognition_service()
+        return color_service.get_status()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==================== PEOPLE COUNTER ENDPOINTS ====================
+
+@router.post("/people-counter/start")
+async def start_people_counter():
+    """Start people counting mode"""
+    try:
+        people_service = get_people_counter_service()
+        result = await people_service.start_counting()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/people-counter/stop")
+async def stop_people_counter():
+    """Stop people counting mode"""
+    try:
+        people_service = get_people_counter_service()
+        result = await people_service.stop_counting()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/people-counter/process-frame")
+async def process_people_frame():
+    """Process a frame to count people"""
+    try:
+        people_service = get_people_counter_service()
+        camera_service = get_camera_service()
+        
+        frame = await camera_service.get_frame()
+        if frame is None:
+            raise HTTPException(status_code=400, detail="No frame available")
+        
+        result = await people_service.process_frame(frame)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/people-counter/process-frame-upload")
+async def process_people_frame_upload(frame_data: dict):
+    """Process an uploaded frame to count people"""
+    try:
+        people_service = get_people_counter_service()
+        
+        # Decode base64 frame
+        frame_bytes = base64.b64decode(frame_data['frame'])
+        nparr = np.frombuffer(frame_bytes, np.uint8)
+        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        
+        if frame is None:
+            raise HTTPException(status_code=400, detail="Invalid frame data")
+        
+        result = await people_service.process_frame(frame)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/people-counter/status")
+async def get_people_counter_status():
+    """Get people counter status"""
+    try:
+        people_service = get_people_counter_service()
+        return people_service.get_status()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/people-counter/history")
+async def get_people_count_history():
+    """Get people count history"""
+    try:
+        people_service = get_people_counter_service()
+        return {"history": people_service.get_count_history()}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==================== EMOTION RECOGNITION ENDPOINTS ====================
+
+class FrameUploadRequest(BaseModel):
+    frame: str  # base64 encoded frame
+
+@router.post("/emotion-recognition/process-frame")
+async def process_emotion_frame():
+    """Process a frame for emotion recognition"""
+    try:
+        emotion_service = get_emotion_recognition_service()
+        camera_service = get_camera_service()
+        
+        frame = await camera_service.get_frame()
+        if frame is None:
+            raise HTTPException(status_code=400, detail="No frame available")
+        
+        result = await emotion_service.process_frame(frame)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/emotion-recognition/process-frame-upload")
+async def process_emotion_frame_upload(request: FrameUploadRequest):
+    """Process an uploaded frame for emotion recognition"""
+    try:
+        emotion_service = get_emotion_recognition_service()
+        
+        # Decode base64 frame
+        frame_bytes = base64.b64decode(request.frame)
+        nparr = np.frombuffer(frame_bytes, np.uint8)
+        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        
+        if frame is None:
+            raise HTTPException(status_code=400, detail="Invalid frame data")
+        
+        result = await emotion_service.process_frame(frame)
+        
+        # Encode annotated frame to base64
+        annotated = result.get("annotated_frame")
+        if annotated is not None:
+            _, buffer = cv2.imencode('.jpg', annotated, [cv2.IMWRITE_JPEG_QUALITY, 90])
+            result["annotated_frame"] = base64.b64encode(buffer.tobytes()).decode()
+        elif frame is not None:
+            _, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 90])
+            result["annotated_frame"] = base64.b64encode(buffer.tobytes()).decode()
+        
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/emotion-recognition/history")
+async def get_emotion_history():
+    """Get emotion recognition history"""
+    try:
+        emotion_service = get_emotion_recognition_service()
+        return {"history": emotion_service.get_emotion_history()}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==================== SOCIAL CUES ENDPOINTS ====================
+
+@router.post("/social-cues/analyze")
+async def analyze_social_cues(request: FrameUploadRequest):
+    """Analyze social cues from a frame"""
+    try:
+        social_service = get_social_cues_service()
+        
+        # Decode base64 frame
+        frame_bytes = base64.b64decode(request.frame)
+        nparr = np.frombuffer(frame_bytes, np.uint8)
+        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        
+        if frame is None:
+            raise HTTPException(status_code=400, detail="Invalid frame data")
+        
+        result = await social_service.analyze_situation(frame)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/social-cues/history")
+async def get_social_cues_history():
+    """Get social cues analysis history"""
+    try:
+        social_service = get_social_cues_service()
+        return {"history": social_service.get_situation_history()}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==================== SENSORY OVERLOAD ENDPOINTS ====================
+
+@router.post("/sensory-overload/analyze")
+async def analyze_sensory_environment(request: FrameUploadRequest):
+    """Analyze environment for sensory overload factors"""
+    try:
+        sensory_service = get_sensory_overload_service()
+        
+        # Decode base64 frame
+        frame_bytes = base64.b64decode(request.frame)
+        nparr = np.frombuffer(frame_bytes, np.uint8)
+        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        
+        if frame is None:
+            raise HTTPException(status_code=400, detail="Invalid frame data")
+        
+        result = await sensory_service.analyze_environment(frame)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/sensory-overload/history")
+async def get_sensory_history():
+    """Get sensory analysis history"""
+    try:
+        sensory_service = get_sensory_overload_service()
+        return {"history": sensory_service.get_sensory_history()}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==================== COMMUNICATION HELPER ENDPOINTS ====================
+
+class CommunicationRequest(BaseModel):
+    what_they_said: str
+    emotion: Optional[str] = None
+
+@router.post("/communication-helper/suggest-response")
+async def suggest_response(request: CommunicationRequest):
+    """Suggest a response based on what someone said"""
+    try:
+        comm_service = get_communication_helper_service()
+        result = comm_service.suggest_response(request.what_they_said, request.emotion)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/communication-helper/scripts")
+async def get_all_scripts():
+    """Get all available social scripts"""
+    try:
+        comm_service = get_communication_helper_service()
+        return comm_service.get_all_scripts()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/communication-helper/scripts/{situation}")
+async def get_script(situation: str):
+    """Get a specific social script"""
+    try:
+        comm_service = get_communication_helper_service()
+        return comm_service.get_script(situation)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/communication-helper/emotion-guide/{emotion}")
+async def get_emotion_response_guide(emotion: str):
+    """Get guidance on how to respond to a specific emotion"""
+    try:
+        comm_service = get_communication_helper_service()
+        return comm_service.get_emotion_response_guide(emotion)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/communication-helper/conversation-starters/{context}")
+async def get_conversation_starters(context: str = "casual"):
+    """Get conversation starters for a specific context"""
+    try:
+        comm_service = get_communication_helper_service()
+        return {"starters": comm_service.get_conversation_starters(context)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==================== ROUTINE ASSISTANT ENDPOINTS ====================
+
+class RoutineRequest(BaseModel):
+    name: str
+    steps: List[str]
+
+@router.post("/routine-assistant/create")
+async def create_routine(request: RoutineRequest):
+    """Create a new routine"""
+    try:
+        routine_service = get_routine_assistant_service()
+        result = routine_service.create_routine(request.name, request.steps)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/routine-assistant/all")
+async def get_all_routines():
+    """Get all routines"""
+    try:
+        routine_service = get_routine_assistant_service()
+        return routine_service.get_all_routines()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/routine-assistant/templates")
+async def get_routine_templates():
+    """Get routine templates"""
+    try:
+        routine_service = get_routine_assistant_service()
+        return routine_service.get_routine_templates()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/routine-assistant/start/{name}")
+async def start_routine(name: str):
+    """Start a routine"""
+    try:
+        routine_service = get_routine_assistant_service()
+        result = routine_service.start_routine(name)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/routine-assistant/complete-step/{name}")
+async def complete_step(name: str):
+    """Complete the current step in a routine"""
+    try:
+        routine_service = get_routine_assistant_service()
+        result = routine_service.complete_step(name)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/routine-assistant/current/{name}")
+async def get_current_step(name: str):
+    """Get the current step in a routine"""
+    try:
+        routine_service = get_routine_assistant_service()
+        result = routine_service.get_current_step(name)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/routine-assistant/transition")
+async def get_transition_support(from_activity: str, to_activity: str):
+    """Get support for transitioning between activities"""
+    try:
+        routine_service = get_routine_assistant_service()
+        result = routine_service.get_transition_support(from_activity, to_activity)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/routine-assistant/today")
+async def get_today_schedule():
+    """Get today's schedule"""
+    try:
+        routine_service = get_routine_assistant_service()
+        result = routine_service.get_schedule_for_today()
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.delete("/routine-assistant/{name}")
+async def delete_routine(name: str):
+    """Delete a routine"""
+    try:
+        routine_service = get_routine_assistant_service()
+        result = routine_service.delete_routine(name)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==================== BODY LANGUAGE ENDPOINTS ====================
+
+@router.post("/body-language/process-frame-upload")
+async def process_body_language_frame_upload(request: FrameUploadRequest):
+    """Process an uploaded frame for body language analysis"""
+    try:
+        body_service = get_body_language_service()
+        
+        frame_bytes = base64.b64decode(request.frame)
+        nparr = np.frombuffer(frame_bytes, np.uint8)
+        frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        
+        if frame is None:
+            raise HTTPException(status_code=400, detail="Invalid frame data")
+        
+        result = await body_service.process_frame(frame)
+        
+        annotated = result.get("annotated_frame")
+        if annotated is not None:
+            _, buffer = cv2.imencode('.jpg', annotated, [cv2.IMWRITE_JPEG_QUALITY, 90])
+            result["annotated_frame"] = base64.b64encode(buffer.tobytes()).decode()
+        
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/body-language/history")
+async def get_body_language_history():
+    """Get body language analysis history"""
+    try:
+        body_service = get_body_language_service()
+        return {"history": body_service.get_history()}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# ==================== AI CONVERSATION ENDPOINTS ====================
+
+class ChatRequest(BaseModel):
+    message: str
+
+class VisionChatRequest(BaseModel):
+    message: str
+    image: str  # base64 JPEG
+    context: str = ""  # optional context about what's detected
+
+@router.post("/ai-assistant/chat")
+async def chat_with_ai(request: ChatRequest):
+    """Have a conversation with the AI assistant"""
+    try:
+        ai_service = get_ai_conversation_service()
+        result = ai_service.chat(request.message)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/ai-assistant/chat-with-vision")
+async def chat_with_vision(request: VisionChatRequest):
+    """Have a conversation with the AI - it can SEE the image"""
+    try:
+        ai_service = get_ai_conversation_service()
+        result = ai_service.chat_with_vision(request.message, request.image, request.context)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/ai-assistant/history")
+async def get_conversation_history():
+    """Get conversation history"""
+    try:
+        ai_service = get_ai_conversation_service()
+        return {"history": ai_service.get_history()}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.post("/ai-assistant/clear")
+async def clear_conversation():
+    """Clear conversation history"""
+    try:
+        ai_service = get_ai_conversation_service()
+        ai_service.clear_history()
+        return {"status": "success", "message": "Conversation history cleared"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 

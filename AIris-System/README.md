@@ -1,22 +1,24 @@
-# AIris System
+# autisticAR System
 
-The main application for AIris — an AI-powered vision assistant for the visually impaired.
+**autisticAR** is an AI-powered support assistant designed specifically for autistic individuals. It helps users understand emotions, navigate social situations, manage sensory environments, and build daily routines.
 
 ## Overview
 
-This folder contains the **current, working version** of the AIris software. It includes:
+This folder contains the **current, working version** of the autisticAR software. It includes:
 
-- **FastAPI Backend** — AI services, WebSocket streaming, REST API
-- **React Frontend** — Development/testing interface (proof of concept)
+- **FastAPI Backend** — AI services, emotion recognition, social cues analysis, sensory overload detection
+- **React Frontend** — Interactive interface with real-time camera processing and voice support
 
 ### Features
 
 | Mode | Status | Description |
 |:-----|:------:|:------------|
-| **Active Guidance** | ✅ Working | Guides user to find and reach objects via audio instructions |
-| **Scene Description** | ✅ Working | Continuous environment analysis with safety alerts and fall detection |
-| **Handsfree Mode** | ✅ Working | Full voice control — no screen interaction required |
-| **Guardian Alerts** | ✅ Working | Email notifications for safety events and daily/weekly summaries |
+| **Emotion Recognition** | ✅ Working | Detects and explains facial emotions in real-time |
+| **Social Cues** | ✅ Working | Analyzes social situations and provides concrete guidance |
+| **Sensory Overload** | ✅ Working | Monitors environment for overwhelming sensory factors |
+| **Communication Helper** | ✅ Working | Suggests responses and provides social scripts |
+| **Routine Assistant** | ✅ Working | Helps with daily routines, schedules, and transitions |
+| **Scene Description** | ✅ Working | Continuous environment analysis with safety alerts |
 
 ## Architecture
 
@@ -26,13 +28,15 @@ AIris-System/
 │   ├── api/                  # FastAPI routes
 │   │   └── routes.py         # REST and WebSocket endpoints
 │   ├── services/             # Core AI services
-│   │   ├── activity_guide_service.py   # Object guidance logic
-│   │   ├── scene_description_service.py # Scene analysis with fall detection
-│   │   ├── camera_service.py           # Camera handling (webcam/ESP32)
-│   │   ├── model_service.py            # YOLO26, MediaPipe, BLIP
-│   │   ├── tts_service.py              # Text-to-speech
-│   │   ├── stt_service.py              # Speech-to-text (Whisper)
-│   │   └── email_service.py             # Guardian alerts and summaries
+│   │   ├── emotion_recognition_service.py    # Facial emotion detection
+│   │   ├── social_cues_service.py            # Social situation analysis
+│   │   ├── sensory_overload_service.py       # Sensory environment monitoring
+│   │   ├── communication_helper_service.py   # Response suggestions
+│   │   ├── routine_assistant_service.py      # Daily routine support
+│   │   ├── scene_description_service.py      # Scene analysis
+│   │   ├── camera_service.py                 # Camera handling
+│   │   ├── model_service.py                  # YOLO, MediaPipe, emotion models
+│   │   └── email_service.py                  # Guardian alerts
 │   ├── models/               # Pydantic schemas
 │   ├── utils/                # Helper utilities
 │   ├── main.py               # FastAPI entry point
@@ -53,7 +57,6 @@ AIris-System/
 - **Node.js 18+**
 - **Groq API Key** — Get free at [console.groq.com](https://console.groq.com)
 - **Computer with webcam and microphone** — Built-in hardware works perfectly
-- **Optional:** ESP32-CAM and Bluetooth mic/headphone for wireless operation
 
 ## Quick Setup
 
@@ -101,41 +104,33 @@ Frontend runs at `http://localhost:5173`
 3. Open `http://localhost:5173` in your browser
 4. Click "Start Camera" to enable video feed
 5. Choose a mode:
-   - **Activity Guide**: Enter an object to find (e.g., "water bottle")
-   - **Scene Description**: Click "Start Recording" for continuous analysis
+   - **Emotion Recognition**: Understand what people are feeling
+   - **Social Cues**: Get guidance on social situations
+   - **Sensory Overload**: Monitor your environment
+   - **Communication Helper**: Get help with conversations
+   - **Routine Assistant**: Manage daily routines
+   - **Scene Description**: Continuous environment awareness
 
-### Handsfree Mode
+### Keyboard Shortcuts
+
+- **1** - Emotion Recognition
+- **2** - Social Cues
+- **3** - Sensory Overload
+- **4** - Communication Helper
+- **5** - Routine Assistant
+- **6** - Scene Description
+
+### Voice Mode
 
 Enable **Voice-Only Mode** for hands-free operation:
 - Click the microphone icon in the header to enable
-- Use voice commands to control the system:
-  - "Switch to activity guide" / "Switch to scene description"
-  - "Turn on camera" / "Turn off camera"
-  - "Input task" (to enter a task via voice)
-  - "Start task" (to begin the task)
-  - "Yes" / "No" (for feedback prompts)
+- Use voice commands to control the system
 - All instructions and descriptions are automatically spoken
-- Perfect for blind users — no screen interaction needed
+- Perfect for users who prefer audio feedback
 
 ## API Documentation
 
 Once the backend is running, visit `http://localhost:8000/docs` for interactive API documentation.
-
-## Hardware Accessories
-
-The software runs entirely on your computer. We've designed a **custom ESP32-CAM with protective casing** for enhanced handsfree operation:
-
-| Component | Connection | Status | Purpose |
-|:----------|:-----------|:------:|:--------|
-| **Custom ESP32-CAM** ⭐ | WiFi → Computer | ✅ Recommended | Custom camera with 3D-printed casing |
-| **Bluetooth Mic** | Bluetooth → Computer | 🔄 Optional | Wireless microphone input |
-| **Bluetooth Headphone** | Bluetooth → Computer | 🔄 Optional | Wireless audio output |
-
-**Recommended Setup:** Our **custom ESP32-CAM with AIris-designed casing** (see `Hardware/cam-casing/`) provides the best handsfree experience with wireless camera positioning.
-
-**Default Setup:** The system works perfectly with your computer's built-in webcam and speakers/microphone. No external hardware is required — we've made this the default option for maximum accessibility and ease of use.
-
-**Handsfree Mode:** Enable Voice-Only Mode in the interface to control everything via voice commands — no screen interaction needed. Perfect for blind users.
 
 ## Environment Variables
 
@@ -167,43 +162,52 @@ VITE_API_BASE_URL=http://localhost:8000  # Optional, default shown
 |:----------|:-----------|
 | Backend | FastAPI, Python 3.10+ |
 | Object Detection | YOLO26s (Ultralytics) |
-| Hand Tracking | MediaPipe |
-| Image Captioning | BLIP |
+| Face Detection | MediaPipe |
+| Emotion Recognition | Deep Learning Models |
 | LLM Reasoning | Groq API (GPT OSS 120B) |
-| Speech-to-Text | Whisper (offline) |
-| Text-to-Speech | pyttsx3 (native) |
+| Speech-to-Text | Web Speech API |
+| Text-to-Speech | Web Speech API |
 | Email Notifications | aiosmtplib (Gmail SMTP) |
 | Frontend | React, TypeScript, Vite |
 | Styling | Tailwind CSS v4 |
 
 ## Key Features
 
-### 🎯 Active Guidance Mode
-- **Object Detection**: YOLO26s for real-time object detection
-- **Hand Tracking**: MediaPipe for precise hand position tracking
-- **Audio Guidance**: Step-by-step instructions to reach objects
-- **Voice Control**: Full handsfree operation with voice commands
-- **Camera Orientation**: Support for both front-facing (webcam) and away-facing (ESP32 chest-mounted) cameras with reverse coordinate calculations
+### 😊 Emotion Recognition
+- **Real-time Detection**: Identifies facial emotions (happy, sad, angry, surprised, neutral, fearful, disgusted)
+- **Clear Explanations**: Concrete descriptions of what emotions look like
+- **Social Guidance**: Actionable tips on how to respond
+- **Visual Feedback**: Color-coded emotion indicators
 
-### 🔍 Scene Description Mode
+### 👥 Social Cues
+- **Situation Analysis**: Understands social context
+- **Response Suggestions**: Concrete scripts for different situations
+- **What to Avoid**: Clear guidance on what not to do
+- **Context-Aware**: Adapts to different social scenarios
+
+### 🌊 Sensory Overload Detection
+- **Environment Monitoring**: Detects crowd density, brightness, movement, visual complexity
+- **Early Warnings**: Alerts before overload occurs
+- **Coping Strategies**: Concrete suggestions for managing sensory input
+- **Real-time Analysis**: Continuous monitoring of sensory factors
+
+### 💬 Communication Helper
+- **Social Scripts**: Pre-written responses for common situations
+- **Conversation Starters**: Help initiating conversations
+- **Response Suggestions**: Real-time help during conversations
+- **Emotion Response Guide**: How to respond to different emotions
+
+### 📋 Routine Assistant
+- **Daily Routines**: Create and follow structured routines
+- **Step-by-Step Guidance**: Track progress through routines
+- **Transition Support**: Help moving between activities
+- **Custom Routines**: Create personalized routines
+
+### 🔍 Scene Description
 - **Continuous Analysis**: Real-time environment understanding
-- **Fall Detection**: Advanced algorithm detects falls and collisions
-- **Safety Alerts**: Automatic guardian email notifications
-- **Risk Scoring**: Configurable sensitivity for alert thresholds
-
-### 🎤 Handsfree Voice Mode
-- **Live Transcription**: Real-time display of user and system speech in voice-only mode
-- **Audio Cues**: Comprehensive audio feedback for camera toggle, mode switching, recording start/stop, voice input refresh, and task input
-- **Time-Aware Welcome Messages**: Contextual greetings that adapt to time of day (morning, afternoon, evening, night)
-- **Enhanced Voice Recognition**: Fuzzy matching for robust command recognition with refresh capability
-
-### 📧 Guardian Features
-- **Email Alerts**: Immediate notifications for safety events
-- **Daily Summaries**: Scheduled activity summaries
-- **Weekly Reports**: Comprehensive weekly activity reports
-- **Risk Threshold**: Adjustable sensitivity (0.1 - 0.5)
-- **Cooldown Protection**: Prevents email spam with smart cooldowns
-- **Email Templates**: Professional HTML email templates with AIris branding
+- **Safety Alerts**: Automatic notifications for concerning situations
+- **Object Detection**: Identifies objects and people in the environment
+- **Voice Control**: Full handsfree operation
 
 ## License
 
